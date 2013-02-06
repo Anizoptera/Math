@@ -1,0 +1,44 @@
+{
+	"name": "aza/math",
+	"description": "AzaMath - Anizoptera CMF mathematic component. Provides functionality to work with large numbers with arbitrary precision (using BCMath) and universal convertor between numeral systems (supported bases from 2 to 62 inclusive, and custom systems; pure PHP realisation, but can use GMP and core PHP functions for speed optimization).",
+	"keywords": [
+		"math", "mathematics", "arithmetic", "calculation",
+		"big", "number", "integer", "fraction", "bigint", "bignum",
+		"arbitrary", "precision",
+		"decimal", "base 36", "base 62",
+		"bcmath", "binary calculator", "gmp",
+		"radix", "base", "convert"
+	],
+	"homepage": "https://github.com/Anizoptera/Math",
+	"license": "MIT",
+	"support": {
+		"issues": "https://github.com/Anizoptera/Math/issues"
+	},
+	"authors": [
+		{"name": "Amal Samally", "email": "amal.samally@gmail.com", "homepage": "https://github.com/amal"},
+		{"name": "AzaGroup Members"}
+	],
+	"require": {
+		"php": ">=5.3.3"
+	},
+	"suggest": {
+		"ext-bcmath": "Install the BCMath (Binary Calculator Arbitrary Precision Mathematics) extension to work with arbitrary precision arithmetic operations.",
+		"ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up number systems conversions and arbitrary precision arithmetic operations.",
+
+		"aza/common": "Used in benchmark tests",
+		"aza/benchmark": "Used in benchmark tests",
+		"aza/phpgen": "Used for development code building"
+	},
+	"autoload": {
+		"psr-0": {
+			"Aza\\Components\\Math": ""
+		}
+	},
+	"target-dir": "Aza/Components/Math",
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.x-dev"
+		}
+	},
+	"minimum-stability": "dev"
+}
