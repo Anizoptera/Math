@@ -16,9 +16,13 @@ use Aza\Components\Math\Exceptions\Exception;
 class BigNumber
 {
 	// Round modes
-	const ROUND_HALF_UP   = PHP_ROUND_HALF_UP; // 1
+	const ROUND_HALF_UP   = PHP_ROUND_HALF_UP;   // 1
 	const ROUND_HALF_DOWN = PHP_ROUND_HALF_DOWN; // 2
-	const ROUND_CUT = 4;
+	/**
+	 * Simple cut at the specified digit after dot.
+	 * Value choosed to not conflict with PHP_ROUND_* constants.
+	 */
+	const ROUND_CUT = 8;
 
 
 	/**
@@ -157,7 +161,8 @@ class BigNumber
 			&& $number = '0';
 
 		// Set the scale for the number to the scale value passed in
-		$number = bcadd(
+		// bcsub is fastest variant
+		$number = bcsub(
 			$this->filterNumber($number),
 			'0',
 			$this->scale
@@ -657,7 +662,7 @@ class BigNumber
 
 
 	/**
-	 * Returns the sign (signum) of the current number
+	 * Sign function. Returns the sign of the current number
 	 *
 	 * @return int -1, 0 or 1 as the value of this number is negative, zero or positive
 	 */
@@ -748,7 +753,10 @@ class BigNumber
 
 	/**
 	 * Convert a number to locale independent string without
-	 * E notation and without loosing precision
+	 * E notation and without loosing precision (as far as possible).
+	 *
+	 * Without this, floats/doubles loses precision just awfully.
+	 * See tests in {@link BigNumberBenchmarkTest::testPrepareFloat}.
 	 *
 	 * @param float $number The number to convert.
 	 *
@@ -757,9 +765,9 @@ class BigNumber
 	protected function prepareFloat($number)
 	{
 		$append = '';
-		$decimals = ini_get('precision') - floor(log10(abs($number)));
+		// The best value (16) established empirically
+		$decimals = 16 - floor(log10(abs($number)));
 		if (0 > $decimals) {
-			/** @noinspection PhpParamsInspection */
 			$number  *= pow(10, $decimals);
 			$append   = str_repeat('0', -$decimals);
 			$decimals = 0;
@@ -768,7 +776,10 @@ class BigNumber
 	}
 
 	/**
-	 * Trims trailing zeros of an arbitrary precision number
+	 * Trims trailing zeros of an arbitrary precision number.
+	 *
+	 * Uses fastest algorithm. See comparision in
+	 * {@link BigNumberBenchmarkTest::testTrim}.
 	 *
 	 * @param string $number
 	 *

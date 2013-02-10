@@ -3,9 +3,11 @@
 namespace Aza\Components\Math\Tests;
 use Aza\Components\Benchmark;
 use Aza\Components\Common\Date;
+use Aza\Components\Math\BigNumber;
 use Aza\Components\Math\NumeralSystem;
 use Aza\Components\PhpGen\PhpGen;
 use PHPUnit_Framework_TestCase as TestCase;
+use ReflectionMethod;
 
 /**
  * Number system conversion benchmarks
@@ -213,6 +215,154 @@ class BigNumberBenchmarkTest extends TestCase
 			$res['variant[3]'][] = Date::timeEnd($start);
 		}
 		$results = Benchmark::analyzeResults($res);
+
+		print_r($results);
+	}
+
+
+	/**
+	 * Test floats preparations
+	 *
+	 * @author amal
+	 */
+	public function testPrepareFloat()
+	{
+		// Create array every time
+		$data = function($original = false) {
+			return $original
+					? array(
+						"0.000012",
+						"0.0000000000000012",
+						"0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012",
+						"12000000",
+						"120000000000000000",
+						"120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+						"0.12",
+						"12",
+						"1.2",
+						"123456789123456789",
+						"123456789123456789123456789123456789",
+						"123456789123456789123456789123456789123456789123456789123456789123456789",
+						"123456789123456789.123456789123456789123456789123456789123456789123456789123456789123456789",
+						"9999999999999999999999999999999999999999",
+					)
+					: array(
+						12e-6,
+						12e-16,
+						12e-100,
+						12e6,
+						12e16,
+						12e100,
+						0.12,
+						12.0,
+						1.2,
+						123456789123456789,
+						123456789123456789123456789123456789,
+						123456789123456789123456789123456789123456789123456789123456789123456789,
+						123456789123456789.123456789123456789123456789123456789123456789123456789123456789123456789,
+						9999999999999999999999999999999999999999,
+					);
+		};
+
+		// floats preparation variants
+		$variant   = array();
+		$precision = null;
+		$variant[] = function($number) use (&$precision) {
+			$append = '';
+			$decimals = $precision - floor(log10(abs($number)));
+			if (0 > $decimals) {
+				/** @noinspection PhpParamsInspection */
+				$number  *= pow(10, $decimals);
+				$append   = str_repeat('0', -$decimals);
+				$decimals = 0;
+			}
+			$number = number_format($number, $decimals, '.', '').$append;
+			return bcsub($number, 0, 100);
+		};
+		$variant[] = function($number) {
+			return bcsub((string)$number, 0, 100);
+		};
+		$variant[] = function($number) {
+			return bcsub($number, 0, 100);
+		};
+
+		$bn = new BigNumber();
+		$ref = new ReflectionMethod($bn, 'trim');
+		$ref->setAccessible(true);
+
+
+		/**
+		 * Check precision option for algorithm
+		 *
+		 * The best results in declining order:
+		 * 16, 15, 14, 13, 12
+		 */
+		$original = $data(true);
+		$fun      = $variant[0];
+		$results  = array();
+		for ($i = 0; $i < 100; $i++) {
+			$precision = $i;
+			$res = array_map(function($number) use ($ref, $bn, $fun, $i) {
+				return $ref->invoke($bn, $fun($number));
+			}, $data());
+			foreach ($res as $k => $v) {
+				$results[$i][$k] = levenshtein($original[$k], $v);
+			}
+		}
+		unset($i, $k, $v, $fun, $res);
+		$results = array_map('array_sum', $results);
+		asort($results, SORT_REGULAR);
+
+		print_r($results);
+		$precision = 16; // Set to best
+
+
+		/**
+		 * Check best PHP precision option
+		 *
+		 * The best results in declining order:
+		 * 18, 12, 11, 10, 13
+		 */
+		$results  = array();
+		for ($i = 0; $i < 100; $i++) {
+			ini_set('precision', $i);
+			foreach ($variant as $key => $fun) {
+				// Skip key "0" - it's independent of the PHP precision option
+				if (!$key) continue;
+				$res = array_map(function($number) use ($ref, $bn, $fun, $i) {
+					return $ref->invoke($bn, $fun($number));
+				}, $data());
+				foreach ($res as $k => $v) {
+					$results[$i][$k] += levenshtein($original[$k], $v);
+				}
+			}
+		}
+		unset($i, $k, $v, $fun, $res, $key, $fun);
+		$results = array_map('array_sum', $results);
+		asort($results, SORT_REGULAR);
+
+		print_r($results);
+		ini_set('precision', 18); // Set to best
+
+
+		/**
+		 * Check floats preparation variants
+		 *
+		 * The only sane option - $variant[0]
+		 * Without this, floats/doubles loses precision just awfully.
+		 */
+		$results = $r = array();
+		foreach ($variant as $key => $fun) {
+			$results[$key] = array_map(function($number) use ($ref, $bn, $fun) {
+				return $ref->invoke($bn, $fun($number));
+			}, $data());
+
+		}
+		unset($key, $fun);
+
+		$r[] = $results[0] === $results[1];
+		$r[] = $results[0] === $results[2];
+		$r[] = $results[1] === $results[2];
 
 		print_r($results);
 	}
