@@ -483,7 +483,7 @@ class NumeralSystemTest extends TestCase
 
 
 	/**
-	 * Simple brutforce testing
+	 * Consistency brutforce testing
 	 *
 	 * @author amal
 	 * @group unit
@@ -494,50 +494,39 @@ class NumeralSystemTest extends TestCase
 	{
 		isset($hasGmp) || $hasGmp = NumeralSystem::$hasGmp;
 
-		if ($hasGmp) {
-			$_data = array(
-				10,
-				PHP_INT_MAX,
-				1, 2, 5, 0,
-				(int)(PHP_INT_MAX/2),
-				gmp_strval(gmp_mul(PHP_INT_MAX, gmp_mul(PHP_INT_MAX, PHP_INT_MAX))),
-			);
+		$_data = array(
+			10,
+			PHP_INT_MAX,
+			1, 2, 5, 0,
+			(int)(PHP_INT_MAX/2),
+		);
 
-			$variants = array(
-				array(
-					'data' => $_data,
-					'from' => 10,
-					'to'   => range(2, 62),
-				),
-				array(
-					'data' => array_map(function($v) {
-						return gmp_strval(gmp_init($v, 10), 35);
-					}, $_data),
-					'from' => 35,
-					'to'   => range(2, 62, 9),
-				),
+		$variants = array(
+			array(
+				'data' => $_data,
+				'from' => 10,
+				'to'   => range(2, 62, 3),
+			),
+		);
+
+		if ($hasGmp) {
+			$_data[] = '784637716923335095224261902710254454442933591094742482943';
+			$_data[] = '345346635467426247614635735745756748u145634567657263463454236246';
+
+			$variants[] = array(
+				'data' => array_map(function($v) {
+					return gmp_strval(gmp_init($v, 10), 43);
+				}, $_data),
+				'from' => 43,
+				'to'   => range(2, 62, 9),
 			);
 		} else {
-			$_data = array(
-				10,
-				PHP_INT_MAX,
-				1, 2, 5, 0,
-				(int)(PHP_INT_MAX/2),
-			);
-
 			$variants = array(
-				array(
-					'data' => $_data,
-					'from' => 10,
-					'to'   => range(2, 62),
-				),
-				array(
-					'data' => array_map(function($v) {
-						return base_convert($v, 10, 35);
-					}, $_data),
-					'from' => 35,
-					'to'   => range(2, 62, 9),
-				),
+				'data' => array_map(function($v) {
+					return base_convert($v, 10, 35);
+				}, $_data),
+				'from' => 35,
+				'to'   => range(2, 62, 9),
 			);
 		}
 

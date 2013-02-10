@@ -5,7 +5,8 @@ use Aza\Components\Common\CArray;
 use Aza\Components\Math\Exceptions\Exception;
 
 /**
- * Universal convertor between numeral systems.
+ * Universal convertor between positional numeral systems.
+ * Also supports huge integers.
  *
  * Supported bases from 2 to 62 inclusive, and custom numeral systems
  * (see {@link NumeralSystem::setSystem setSystem} method).
@@ -14,16 +15,17 @@ use Aza\Components\Math\Exceptions\Exception;
  * and {@link http://php.net/math core PHP} functions for speed improvement.
  *
  * @link http://en.wikipedia.org/wiki/Numeral_system
+ * @link http://en.wikipedia.org/wiki/Positional_notation
  *
- * @uses extension-gmp
- * @uses BigNumber
+ * @uses extension-gmp For speedup with basic 2-62 bases
+ * @uses BigNumber For fractions conversion (currently not finished)
  *
  * @project Anizoptera CMF
  * @package system.math
  */
 abstract class NumeralSystem
 {
-	// Bundled custom numeral systems
+	//region Bundled custom numeral systems (examples)
 
 	/**
 	 * RFC 4648 compliant Base32 alphabit (not original base32 encoding!)
@@ -46,6 +48,8 @@ abstract class NumeralSystem
 	 */
 	const BASE64_URL = '64url';
 
+	//endregion
+
 
 
 	/**
@@ -53,12 +57,20 @@ abstract class NumeralSystem
 	 */
 	public static $hasGmp = false;
 
+
+
+	//region Settings
+
 	/**
-	 * Numeral systems settings
+	 * Numeral systems settings.
+	 * Prepared for speedup.
+	 *
+	 * @see setSystem
 	 */
 	protected static $systems = array(
 		/*
-		 * Alphabet for bases between 2 and 36, inclusive
+		 * Alphabet for basic positional numeral systems with
+		 * bases between 2 and 36, inclusive
 		 */
 		'_36' => array(
 			'0123456789abcdefghijklmnopqrstuvwxyz',
@@ -66,13 +78,18 @@ abstract class NumeralSystem
 		),
 
 		/*
-		 * Alphabet for bases between 37 and 62, inclusive
-		 * We use different alphabets for bases over an lower than 36 as GMP does
+		 * Alphabet for numeral systems with bases between 37 and 62, inclusive.
+		 *
+		 * NOTE: We use different alphabets for bases over an
+		 * lower than 36 as GMP does for consistency
 		 */
 		'_62' => array(
 			'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
 			array(0=>0,1=>1,2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,'A'=>10,'B'=>11,'C'=>12,'D'=>13,'E'=>14,'F'=>15,'G'=>16,'H'=>17,'I'=>18,'J'=>19,'K'=>20,'L'=>21,'M'=>22,'N'=>23,'O'=>24,'P'=>25,'Q'=>26,'R'=>27,'S'=>28,'T'=>29,'U'=>30,'V'=>31,'W'=>32,'X'=>33,'Y'=>34,'Z'=>35,'a'=>36,'b'=>37,'c'=>38,'d'=>39,'e'=>40,'f'=>41,'g'=>42,'h'=>43,'i'=>44,'j'=>45,'k'=>46,'l'=>47,'m'=>48,'n'=>49,'o'=>50,'p'=>51,'q'=>52,'r'=>53,'s'=>54,'t'=>55,'u'=>56,'v'=>57,'w'=>58,'x'=>59,'y'=>60,'z'=>61),
 		),
+
+
+		// Bundled custom numeral systems (examples)
 
 		self::BASE32_RFC => array(
 			'abcdefghijklmnopqrstuvwxyz234567',
@@ -91,10 +108,10 @@ abstract class NumeralSystem
 		),
 	);
 
-
 	/**
 	 * Maximum allowed numbers length for
 	 * supported positional numeric systems
+	 * (used to speedup checks with native functions)
 	 *
 	 * @var array
 	 * @access protected
@@ -103,17 +120,24 @@ abstract class NumeralSystem
 
 	/**
 	 * Supported positional numeric systems
+	 * (for native PHP functions like {@link base_convert}).
+	 *
+	 * Array used to speedup checks.
 	 */
 	protected static $posNumSystems = array(
 		2=>1,3=>1,4=>1,5=>1,6=>1,7=>1,8=>1,9=>1,10=>1,11=>1,12=>1,13=>1,14=>1,15=>1,16=>1,17=>1,18=>1,19=>1,20=>1,21=>1,22=>1,23=>1,24=>1,25=>1,26=>1,27=>1,28=>1,29=>1,30=>1,31=>1,32=>1,33=>1,34=>1,35=>1,36=>1
 	);
 
 	/**
-	 * Supported positional numeric systems for GMP conversion
+	 * Supported positional numeric systems for GMP conversion.
+	 *
+	 * Array used to speedup checks.
 	 */
 	protected static $posNumSystemsGmp = array(
 		2=>1,3=>1,4=>1,5=>1,6=>1,7=>1,8=>1,9=>1,10=>1,11=>1,12=>1,13=>1,14=>1,15=>1,16=>1,17=>1,18=>1,19=>1,20=>1,21=>1,22=>1,23=>1,24=>1,25=>1,26=>1,27=>1,28=>1,29=>1,30=>1,31=>1,32=>1,33=>1,34=>1,35=>1,36=>1,37=>1,38=>1,39=>1,40=>1,41=>1,42=>1,43=>1,44=>1,45=>1,46=>1,47=>1,48=>1,49=>1,50=>1,51=>1,52=>1,53=>1,54=>1,55=>1,56=>1,57=>1,58=>1,59=>1,60=>1,61=>1,62=>1
 	);
+
+	//endregion
 
 
 
@@ -501,7 +525,7 @@ abstract class NumeralSystem
 // Check if we have GMP extension enabled
 NumeralSystem::$hasGmp = defined('GMP_VERSION');
 
-// Set max allowed numbers length for speedup with native functions by base
+// Set max allowed numbers length by base (for speedup with native functions)
 NumeralSystem::$maxLengthForSpeedup = 4 === PHP_INT_SIZE
 	? array(2=>30,3=>19,4=>15,5=>13,6=>11,7=>11,8=>10,9=>9,10=>9,11=>8,12=>8,13=>8,14=>8,15=>7,16=>7,17=>7,18=>7,19=>7,20=>7,21=>7,22=>6,23=>6,24=>6,25=>6,26=>6,27=>6,28=>6,29=>6,30=>6,31=>6,32=>6,33=>6,34=>6,35=>6,36=>5)
 	: array(2=>62,3=>39,4=>31,5=>27,6=>24,7=>22,8=>20,9=>19,10=>18,11=>18,12=>17,13=>17,14=>16,15=>16,16=>15,17=>15,18=>15,19=>14,20=>14,21=>14,22=>14,23=>13,24=>13,25=>13,26=>13,27=>13,28=>13,29=>12,30=>12,31=>12,32=>12,33=>12,34=>12,35=>12,36=>12)
