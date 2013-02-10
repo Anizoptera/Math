@@ -23,8 +23,7 @@
 	},
 	"suggest": {
 		"ext-bcmath": "Install the BCMath (Binary Calculator Arbitrary Precision Mathematics) extension to work with arbitrary precision arithmetic operations.",
-		"ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up number systems conversions and arbitrary precision arithmetic operations.",
-
+		"ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up number systems conversions and (in future) arbitrary precision arithmetic operations.",
 		"aza/common": "Used in benchmark tests",
 		"aza/benchmark": "Used in benchmark tests",
 		"aza/phpgen": "Used for development code building"
