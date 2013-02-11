@@ -231,6 +231,11 @@ class BigNumberBenchmarkTest extends TestCase
 		$data = function($original = false) {
 			return $original
 					? array(
+						"6.43",
+						"9.5678",
+						"12.34567890123",
+						"12.34567890123456789",
+						"0.000012",
 						"0.000012",
 						"0.0000000000000012",
 						"0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012",
@@ -247,6 +252,11 @@ class BigNumberBenchmarkTest extends TestCase
 						"9999999999999999999999999999999999999999",
 					)
 					: array(
+						2.33 + 4.1,
+						9.5678,
+						12.34567890123,
+						12.34567890123456789,
+						0.000012,
 						12e-6,
 						12e-16,
 						12e-100,
@@ -267,6 +277,7 @@ class BigNumberBenchmarkTest extends TestCase
 		// floats preparation variants
 		$variant   = array();
 		$precision = null;
+		// Special calculation
 		$variant[] = function($number) use (&$precision) {
 			$append = '';
 			$decimals = $precision - floor(log10(abs($number)));
@@ -279,10 +290,64 @@ class BigNumberBenchmarkTest extends TestCase
 			$number = number_format($number, $decimals, '.', '').$append;
 			return bcsub($number, 0, 100);
 		};
+		// Simple expand scientific (exponential) notation
 		$variant[] = function($number) {
-			return bcsub((string)$number, 0, 100);
+			$number = (string)$number;
+			if (false !== ($pos = strpos($number, 'E'))
+			    || false !== ($pos = strpos($number, 'e'))
+			) {
+				$firstPart = substr($number, 0, $pos);
+				if ('-' === $number[$pos+1]) {
+					$secondPart = substr($number, $pos+2);
+					$number = bcdiv(
+						$firstPart,
+						bcpow('10', $secondPart, 0),
+						100
+					);
+				} else {
+					$secondPart = substr($number, $pos+1);
+					$number = bcmul(
+						$firstPart,
+						bcpow('10', $secondPart, 0),
+						100
+					);
+				}
+			}
+			return bcsub($number, 0, 100);
 		};
-		$variant[] = function($number) {
+		// Mixed method
+		$variant[] = function($number) use (&$precision) {
+			$number = (string)$number;
+			if (false !== ($pos = strpos($number, 'E'))
+			    || false !== ($pos = strpos($number, 'e'))
+			) {
+				$firstPart  = substr($number, 0, $pos);
+				if ('-' === $number[$pos+1]) {
+					$secondPart = substr($number, $pos+2);
+					$number = bcdiv(
+						$firstPart,
+						bcpow('10', $secondPart, 0),
+						100
+					);
+				} else {
+					$secondPart = substr($number, $pos+1);
+					$number = bcmul(
+						$firstPart,
+						bcpow('10', $secondPart, 0),
+						100
+					);
+				}
+			} else {
+				$append = '';
+				$decimals = $precision - floor(log10(abs($number)));
+				if (0 > $decimals) {
+					/** @noinspection PhpParamsInspection */
+					$number  *= pow(10, $decimals);
+					$append   = str_repeat('0', -$decimals);
+					$decimals = 0;
+				}
+				$number = number_format($number, $decimals, '.', '').$append;
+			}
 			return bcsub($number, 0, 100);
 		};
 
@@ -321,9 +386,9 @@ class BigNumberBenchmarkTest extends TestCase
 		 * Check best PHP precision option
 		 *
 		 * The best results in declining order:
-		 * 18, 12, 11, 10, 13
+		 * 16, 15, 14, 13, 12
 		 */
-		$results  = array();
+		$results = array();
 		for ($i = 0; $i < 100; $i++) {
 			ini_set('precision', $i);
 			foreach ($variant as $key => $fun) {
@@ -333,37 +398,49 @@ class BigNumberBenchmarkTest extends TestCase
 					return $ref->invoke($bn, $fun($number));
 				}, $data());
 				foreach ($res as $k => $v) {
+					if (!isset($results[$i][$k])) {
+						$results[$i][$k] = 0;
+					}
 					$results[$i][$k] += levenshtein($original[$k], $v);
 				}
 			}
 		}
-		unset($i, $k, $v, $fun, $res, $key, $fun);
+		unset($i, $k, $v, $fun, $res, $key);
 		$results = array_map('array_sum', $results);
 		asort($results, SORT_REGULAR);
 
 		print_r($results);
-		ini_set('precision', 18); // Set to best
+		ini_set('precision', 16); // Set to best
 
 
 		/**
 		 * Check floats preparation variants
 		 *
-		 * The only sane option - $variant[0]
-		 * Without this, floats/doubles loses precision just awfully.
+		 * Best variont is "Simple expand scientific notation"
+		 * Mixed method is worst
+		 * Special calculation is ini precision independent,
+		 *  but worse then "Simple expand..." with good ini precision values
 		 */
-		$results = $r = array();
+		$results = $resultsView = $r = array();
 		foreach ($variant as $key => $fun) {
-			$results[$key] = array_map(function($number) use ($ref, $bn, $fun) {
+			$resultsView[$key] = array_map(function($number) use ($ref, $bn, $fun) {
 				return $ref->invoke($bn, $fun($number));
 			}, $data());
-
+			foreach ($resultsView[$key] as $k => $v) {
+				if (!isset($results[$key][$k])) {
+					$results[$key][$k] = 0;
+				}
+				$results[$key][$k] += levenshtein($original[$k], $v);
+			}
 		}
-		unset($key, $fun);
+		unset($k, $v, $fun, $key);
+		$results = array_map('array_sum', $results);
+		asort($results, SORT_REGULAR);
 
-		$r[] = $results[0] === $results[1];
-		$r[] = $results[0] === $results[2];
-		$r[] = $results[1] === $results[2];
+		$isEquival = $resultsView[0] === $resultsView[1];
+		$data = array_map('strval', $data());
 
 		print_r($results);
+		print_r($resultsView);
 	}
 }

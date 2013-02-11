@@ -307,17 +307,17 @@ class BigNumberTest extends TestCase
 		$this->assertSame('9223372039002259455', $bn->getValue());
 
 		$bn->setCalcScale(3);
-		$this->assertSame('9223372039002259457.25', $bn->add(2.25)->getValue());
+		$this->assertSame('9223372039002259457.25', $bn->add('2.25')->getValue());
 
 
 		// ----
 		// Floats can loose precision
-		$number = new BigNumber(2.33);
-		$bn = $number->add(4.1);
+		$number = new BigNumber('2.33');
+		$bn = $number->add('4.1');
 		$this->assertSame('6.43', (string)$bn->round(2));
 
-		$number = new BigNumber(2.33);
-		$bn = $number->add(4.123);
+		$number = new BigNumber('2.33');
+		$bn = $number->add('4.123');
 		$this->assertSame('6.453', (string)$bn->round(3));
 
 
@@ -354,17 +354,17 @@ class BigNumberTest extends TestCase
 		$this->assertSame('-9223372034707292161', $bn->getValue());
 
 		$bn->setCalcScale(3);
-		$this->assertSame('-9223372034707292163.25', $bn->subtract(2.25)->getValue());
+		$this->assertSame('-9223372034707292163.25', $bn->subtract('2.25')->getValue());
 
 
 		// ----
 		// Floats can loose precision
-		$number = new BigNumber(6.43);
-		$bn = $number->subtract(2.2);
+		$number = new BigNumber('6.43');
+		$bn = $number->subtract('2.2');
 		$this->assertSame('4.23', (string)$bn->round(2));
 
-		$number = new BigNumber(6.453);
-		$bn = $number->subtract(2.33);
+		$number = new BigNumber('6.453');
+		$bn = $number->subtract('2.33');
 		$this->assertSame('4.123', (string)$bn->round(3));
 
 
@@ -623,10 +623,15 @@ class BigNumberTest extends TestCase
 
 		$this->assertSame($bn1, $bn1->sqrt());
 		$this->assertSame('4', $bn1->getValue());
-		$this->assertSame('4', $bn2->setCalcScale(0)->sqrt()->getValue());
+		$this->assertSame(
+			'4',
+			$bn2->setCalcScale(0)->sqrt()->getValue()
+		);
 
-		$bn3->setCalcScale(8);
-		$this->assertSame('4.12310562', $bn3->sqrt()->getValue());
+		$this->assertSame(
+			'4.12310562',
+			$bn3->setCalcScale(8)->sqrt()->getValue()
+		);
 	}
 
 
@@ -946,6 +951,21 @@ class BigNumberTest extends TestCase
 		$this->assertSame(0, $bn2->compareTo(2147483647));
 		$this->assertSame(1, $bn1->compareTo($bn2));
 		$this->assertSame(-1, $bn2->compareTo($bn1));
+
+		$number = new BigNumber(10);
+		$this->assertTrue($number->compareTo(20) < 0);
+		$this->assertTrue($number->isLessThan(20));
+		$this->assertTrue($number->isLessThanOrEqualTo(20));
+
+		$number = new BigNumber(20);
+		$this->assertTrue($number->compareTo(10) > 0);
+		$this->assertTrue($number->isGreaterThan(10));
+		$this->assertTrue($number->isGreaterThanOrEqualTo(10));
+
+		$number = new BigNumber(20);
+		$this->assertTrue($number->compareTo(20) === 0);
+		$this->assertTrue($number->isLessThanOrEqualTo(20));
+		$this->assertTrue($number->isGreaterThanOrEqualTo(20));
 	}
 
 	/**
@@ -1190,6 +1210,12 @@ class BigNumberTest extends TestCase
 		$this->assertSame('8000000000000002', $bn2->convertToBase(16));
 		$this->assertSame('10', $bn3->convertToBase(2));
 		$this->assertSame('1y2p0ij32e8e7', $bn1->convertToBase(36));
+
+
+		$number = new BigNumber('9223372036854775807');
+		$number = $number->pow(2)->convertToBase(62);
+//		echo $number . PHP_EOL; // 1wlVYJaWMuw53lV7Cg98qn
+		$this->assertSame('1wlVYJaWMuw53lV7Cg98qn', $number);
 	}
 
 
@@ -1212,6 +1238,8 @@ class BigNumberTest extends TestCase
 	 *
 	 * @author amal
 	 * @group unit
+	 * @covers Aza\Components\Math\BigNumber::__construct
+	 * @covers Aza\Components\Math\BigNumber::setValue
 	 * @covers Aza\Components\Math\BigNumber::filterNumber
 	 */
 	public function testFilterNumber()
@@ -1259,7 +1287,6 @@ class BigNumberTest extends TestCase
 	 *
 	 * @author amal
 	 * @group unit
-	 * @covers Aza\Components\Math\BigNumber::prepareFloat
 	 * @covers Aza\Components\Math\BigNumber::__construct
 	 * @covers Aza\Components\Math\BigNumber::setValue
 	 * @covers Aza\Components\Math\BigNumber::filterNumber
@@ -1268,11 +1295,18 @@ class BigNumberTest extends TestCase
 	{
 		// ----
 		$bn = new BigNumber(12e-6);
-		$this->assertSame('0.000012', (string)$bn->round(6));
+		$this->assertSame('0.000012', (string)$bn);
 
 		// ----
 		$bn = new BigNumber(12e-16);
-		$this->assertSame('0.0000000000000012', (string)$bn->round(16));
+		$this->assertSame('0.0000000000000012', (string)$bn);
+
+		// ----
+		$expected = '0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012';
+		$bn = new BigNumber(12e-100);
+		$this->assertSame($expected, (string)$bn);
+		$bn = new BigNumber("12e-100");
+		$this->assertSame($expected, (string)$bn);
 
 		// ----
 		$bn = new BigNumber(12e6);
@@ -1283,12 +1317,38 @@ class BigNumberTest extends TestCase
 		$this->assertSame('120000000000000000', (string)$bn);
 
 		// ----
+		$expected = '120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+		$bn = new BigNumber(12e100);
+		$this->assertSame($expected, (string)$bn);
+		$bn = new BigNumber("12e100");
+		$this->assertSame($expected, (string)$bn);
+		$bn = new BigNumber("12E100");
+		$this->assertSame($expected, (string)$bn);
+
+		// ----
 		$bn = new BigNumber(0.12);
-		$this->assertSame('0.12', (string)$bn->round(2));
+		$this->assertSame('0.12', (string)$bn);
 
 		// ----
 		$bn = new BigNumber(1.2);
-		$this->assertSame('1.2', (string)$bn->round(1));
+		$this->assertSame('1.2', (string)$bn);
+
+		// ----
+		$bn = new BigNumber(6.43);
+		$this->assertSame('6.43', (string)$bn);
+
+		// ----
+		$bn = new BigNumber(9.5678);
+		$this->assertSame('9.5678', (string)$bn);
+
+		// ----
+		$number = new BigNumber(2.33);
+		$bn = $number->add(4.1);
+		$this->assertSame("6.43", (string)$bn->round(2));
+
+		$number = new BigNumber(2.33);
+		$bn = $number->add(4.123);
+		$this->assertSame("6.453", (string)$bn->round(3));
 	}
 
 	/**
