@@ -349,7 +349,7 @@ abstract class NumeralSystem
 				 * - Support of negative integers is platform dependent. Without '-' char. Not acceptable
 				 *   Maximum integer is PHP_INT_MAX (platform dependent)
 				 * - Fractions are not supported
-				 * + Ignores incorrect symbols
+				 *   Ignores incorrect symbols, but only when converting to decimal
 				 * + Fastest variant
 				 */
 				if ('10' == $fromBase) {
@@ -467,7 +467,7 @@ abstract class NumeralSystem
 			// Ignore incorrect chars
 			isset($abcFrom[$char = $number[$i]])
 				&& ($pos = $abcFrom[$char]) < $abcFromSize
-				&& $nibbles[$i] = $pos;
+				&& $nibbles[] = $pos;
 			$i++;
 		}
 		$length = count($nibbles);

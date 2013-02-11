@@ -1,13 +1,13 @@
 {
 	"name": "aza/math",
-	"description": "AzaMath - Anizoptera CMF mathematic component. Provides functionality to work with large numbers with arbitrary precision (using BCMath) and universal convertor between numeral systems (supported bases from 2 to 62 inclusive, and custom systems; pure PHP realisation, but can use GMP and core PHP functions for speed optimization).",
+	"description": "AzaMath - Anizoptera CMF mathematic component. Arbitrary precision arithmetic (for huge integers; BCMath wrapper) and universal convertor between positional numeral systems (supported bases from 2 to 62 inclusive, and systems with custom alphabet; pure PHP realisation, can use GMP and core PHP functions for speed optimization).",
 	"keywords": [
 		"math", "mathematics", "arithmetic", "calculation",
-		"big", "number", "integer", "fraction", "bigint", "bignum",
+		"big", "huge", "number", "integer", "fraction", "bigint", "bignum",
 		"arbitrary", "precision",
 		"decimal", "base 36", "base 62",
 		"bcmath", "binary calculator", "gmp",
-		"radix", "base", "convert"
+		"positional", "radix", "base", "convert"
 	],
 	"homepage": "https://github.com/Anizoptera/Math",
 	"license": "MIT",

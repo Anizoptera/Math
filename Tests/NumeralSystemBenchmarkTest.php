@@ -31,7 +31,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 	 * - Support of negative integers is platform dependent. Without '-' sign. Not acceptable
 	 *   Maximum integer is PHP_INT_MAX (platform dependent)
 	 * - Fractions are not supported
-	 * + Ignores incorrect symbols
+	 *   Ignores incorrect symbols, but only when converting to decimal
 	 * + Fastest variant
 	 *
 	 * base_convert

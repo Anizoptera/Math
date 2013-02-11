@@ -304,6 +304,50 @@ class NumeralSystemTest extends TestCase
 		);
 		$this->assertSame('4kb8ehlehl60mc6j37i480elhce56', $converted);
 
+		$number = '784637716923335095224261902710254454442933591094742482943';
+		$converted = NumeralSystem::convert($number, 10, 2);
+		$this->assertSame(
+			'111111111111111111111111111111111111111111111111111111111111101000000000000000000000000000000000000000000000000000000000000010111111111111111111111111111111111111111111111111111111111111111',
+			$converted
+		);
+		$converted = NumeralSystem::convert($number, 10, 62);
+		$this->assertSame(
+			'LP90nCTXd7OmXvW5MTOQdPCvBNu6eBtX',
+			$converted
+		);
+
+		$number = '345346635467426247614635735745756748145634567657263463454236246';
+		$converted = NumeralSystem::convert($number, 10, 2);
+		$this->assertSame(
+			'1101011011101000111001001010010101111010011010010010001010101100110110011010001100111110010010001011001000101110010010001100110111111011010011100001111101000011110110000111000101100110110001000101111001010110',
+			$converted
+		);
+		$converted = NumeralSystem::convert($number, 10, 62);
+		$this->assertSame(
+			'dWv9r7zcqu1xuu3ovqrl9we65sYDzfEhmlC',
+			$converted
+		);
+
+		$number = '345346635467426247614635735745756748145634567657263463454236246345346635467426247614635735745756748145634567657263463454236246';
+		$converted = NumeralSystem::convert($number, 10, 2);
+		$this->assertSame(
+			'1000001010011010101010100010101001010010100010111010110101011010111001011000010110101000011010101101111000011100100101011000001110100010011011110011011111000111111001010111000010100101001100001101011111111100110100111100001010100111001101100110001100010100011110000001001101111111101111010110001101011110101100111001111111100001100110001001110101101111010001111101000011110110000111000101100110110001000101111001010110',
+			$converted
+		);
+		$converted = NumeralSystem::convert($number, 10, 62);
+		$this->assertSame(
+			'1Az18U0TfLIl0UTv3sjRj7AKp18UwTfp4TlGPxMcnT7jc9o7HJVYgMyGXxMvnPXuKWRslAk',
+			$converted
+		);
+
+
+		// Special test - ignore incorrect chars in own realization
+		$number1 = NumeralSystem::convert("1234567890", 10, 16);
+		$this->assertSame('499602d2', $number1);
+		$number2 = NumeralSystem::convert("1q2w3e4r5t6y7z8~9`0", 10, 16);
+		$this->assertSame($number1, $number2);
+
+
 		NumeralSystem::$hasGmp = $hasGmp;
 	}
 
@@ -503,7 +547,7 @@ class NumeralSystemTest extends TestCase
 
 		$variants = array(
 			array(
-				'data' => $_data,
+				'data' => &$_data,
 				'from' => 10,
 				'to'   => range(2, 62, 3),
 			),
@@ -511,7 +555,7 @@ class NumeralSystemTest extends TestCase
 
 		if ($hasGmp) {
 			$_data[] = '784637716923335095224261902710254454442933591094742482943';
-			$_data[] = '345346635467426247614635735745756748u145634567657263463454236246';
+			$_data[] = '345346635467426247614635735745756748145634567657263463454236246';
 
 			$variants[] = array(
 				'data' => array_map(function($v) {
@@ -521,7 +565,7 @@ class NumeralSystemTest extends TestCase
 				'to'   => range(2, 62, 9),
 			);
 		} else {
-			$variants = array(
+			$variants[] = array(
 				'data' => array_map(function($v) {
 					return base_convert($v, 10, 35);
 				}, $_data),

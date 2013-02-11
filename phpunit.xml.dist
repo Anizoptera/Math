@@ -18,7 +18,7 @@
 		>
 	<php>
 		<ini name="memory_limit" value="-1" />
-		<ini name="precision" value="18" />
+		<ini name="precision" value="16" />
 	</php>
 
 	<testsuites>
@@ -39,6 +39,7 @@
 			<directory>./</directory>
 			<exclude>
 				<directory>./Tests</directory>
+				<directory>./vendor</directory>
 			</exclude>
 		</whitelist>
 	</filter>
