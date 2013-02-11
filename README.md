@@ -101,16 +101,16 @@ echo $number . PHP_EOL; // 968232710.955
 
 // Comparisions
 $number = new BigNumber(10);
-$this->assertTrue($number->compareTo(20) < 0);
-$this->assertTrue($number->isLessThan(20));
+echo ($number->compareTo(20) < 0) . PHP_EOL; // 1
+echo $number->isLessThan(20) . PHP_EOL; // 1
 
 $number = new BigNumber(20);
-$this->assertTrue($number->compareTo(10) > 0);
-$this->assertTrue($number->isGreaterThan(10));
+echo ($number->compareTo(10) > 0) . PHP_EOL; // 1
+echo $number->isGreaterThan(10) . PHP_EOL; // 1
 
 $number = new BigNumber(20);
-$this->assertTrue($number->compareTo(20) === 0);
-$this->assertTrue($number->isLessThanOrEqualTo(20));
+echo ($number->compareTo(20) === 0) . PHP_EOL; // 1
+echo $number->isLessThanOrEqualTo(20) . PHP_EOL; // 1
 ```
 
 Example #4 - Input filtration
@@ -149,4 +149,4 @@ MIT, see LICENSE.md
 Links
 -----
 
-[(RU) AzaMath — Конвертация систем счисления (включая кастомные) + арифметика произвольной точности](http://habrahabr.ru/post/168935/)
+[(RU) AzaMath — Cистемы счисления (включая кастомные) + арифметика произвольной точности на PHP](http://habrahabr.ru/post/168935/)
