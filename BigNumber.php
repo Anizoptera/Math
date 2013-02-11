@@ -734,7 +734,14 @@ class BigNumber
 
 
 	/**
-	 * Filters a number, converting it to a string value
+	 * Filters a number, converting it to a string value.
+	 *
+	 * Prepares a number without scientific (exponential)
+	 * notation and without loosing precision
+	 * (as far as possible).
+	 *
+	 * Without this, floats/doubles loses precision just awfully.
+	 * See tests in {@link BigNumberBenchmarkTest::testPrepareFloat}.
 	 *
 	 * @param mixed $number
 	 *
@@ -742,37 +749,52 @@ class BigNumber
 	 */
 	protected function filterNumber($number)
 	{
+		// 16 is the best value. was obtained empirically
+		(16 !== ($oldPrecision =  ini_get('precision')))
+			&& ini_set('precision', 16);
+		$number = (string)$number;
+		(16 !== $oldPrecision)
+			&& ini_set('precision', $oldPrecision);
+
+		// Expand scientific (exponential) support
+		if (false !== ($pos = strpos($number, 'E'))
+		    || false !== ($pos = strpos($number, 'e'))
+		) {
+			$firstPart = filter_var(
+				substr($number, 0, $pos),
+				FILTER_SANITIZE_NUMBER_FLOAT,
+				FILTER_FLAG_ALLOW_FRACTION
+			);
+			if ('-' === $number[$pos+1]) {
+				$secondPart = filter_var(
+					substr($number, $pos+2),
+					FILTER_SANITIZE_NUMBER_FLOAT,
+					FILTER_FLAG_ALLOW_FRACTION
+				);
+				return bcdiv(
+					$firstPart,
+					bcpow('10', $secondPart, 0),
+					100
+				);
+			} else {
+				$secondPart = filter_var(
+					substr($number, $pos+1),
+					FILTER_SANITIZE_NUMBER_FLOAT,
+					FILTER_FLAG_ALLOW_FRACTION
+				);
+				return bcmul(
+					$firstPart,
+					bcpow('10', $secondPart, 0),
+					100
+				);
+			}
+		}
+
 		return filter_var(
-			is_float($number)
-					? $this->prepareFloat($number)
-					: (string)$number,
+			$number,
 			FILTER_SANITIZE_NUMBER_FLOAT,
 			FILTER_FLAG_ALLOW_FRACTION
 		);
-	}
-
-	/**
-	 * Convert a number to locale independent string without
-	 * E notation and without loosing precision (as far as possible).
-	 *
-	 * Without this, floats/doubles loses precision just awfully.
-	 * See tests in {@link BigNumberBenchmarkTest::testPrepareFloat}.
-	 *
-	 * @param float $number The number to convert.
-	 *
-	 * @return string The locale independent converted number.
-	 */
-	protected function prepareFloat($number)
-	{
-		$append = '';
-		// The best value (16) established empirically
-		$decimals = 16 - floor(log10(abs($number)));
-		if (0 > $decimals) {
-			$number  *= pow(10, $decimals);
-			$append   = str_repeat('0', -$decimals);
-			$decimals = 0;
-		}
-		return number_format($number, $decimals, '.', '').$append;
 	}
 
 	/**
