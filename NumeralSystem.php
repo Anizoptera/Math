@@ -497,8 +497,12 @@ abstract class NumeralSystem
 	/**
 	 * Adds new system for conversion
 	 *
-	 * @param string $name     System unique name
-	 * @param string $alphabet System alphabet as a string
+	 * @param string $name <p>
+	 * System unique name
+	 * </p>
+	 * @param string $alphabet <p>
+	 * System alphabet as a string (use only unique one byte characters)
+	 * </p>
 	 *
 	 * @throws Exception
 	 */

@@ -527,6 +527,56 @@ class NumeralSystemTest extends TestCase
 
 
 	/**
+	 * Binary data conversion
+	 *
+	 * @author amal
+	 * @group unit
+	 * @covers Aza\Components\Math\NumeralSystem
+	 */
+	public function testBinaryAlphabet()
+	{
+		// Full binary alphabet
+		for ($i = 0, $alphabet = ''; $i < 256; $i++) $alphabet .= chr($i);
+		$name = 'binary';
+		NumeralSystem::setSystem($name, $alphabet);
+
+		// ----
+		$var = 'example';
+		$expected_hex = sha1($var);
+		$expected_bin = sha1($var, true);
+		$result_hex   = NumeralSystem::convert($expected_bin, $name, 16);
+		$result_bin   = NumeralSystem::convert($expected_hex, 16, $name);
+		$result_dec   = NumeralSystem::convertFrom($expected_bin, $name);
+		$result_62    = NumeralSystem::convert($expected_bin, $name, 62);
+
+		$this->assertSame(
+			'c3499c2729730a7f807efb8676a92dcb6f8a3f8f',
+			$expected_hex
+		);
+		$this->assertSame($expected_hex, $result_hex);
+		$this->assertSame($expected_bin, $result_bin);
+		$this->assertSame(
+			'1114894757552854782121625437503858766054806929295',
+			$result_dec
+		);
+		$this->assertSame(
+			'RraoYJ2D9ITz12jWdNdIAvymPhX',
+			$result_62
+		);
+
+
+		// ----
+		$var = time();
+		$expected_hex = sha1($var);
+		$expected_bin = sha1($var, true);
+		$result_hex   = NumeralSystem::convert($expected_bin, $name, 16);
+		$result_bin   = NumeralSystem::convert($expected_hex, 16, $name);
+		$this->assertSame($expected_hex, $result_hex);
+		$this->assertSame($expected_bin, $result_bin);
+	}
+
+
+	/**
 	 * Consistency brutforce testing
 	 *
 	 * @author amal

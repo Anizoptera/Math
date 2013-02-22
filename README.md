@@ -69,17 +69,32 @@ Example #2 - Custom numeral system
 ```php
 // Add new system with custom alphabet
 // Each char must appear only once.
-// It should use only ASCII characters.
+// It should use only one byte characters.
 $alphabet = '!@#$%^&*()_+=-'; // base 14 equivalent
-$name     = 'StrangeSystem';
-NumeralSystem::setSystem($name, $alphabet);
+$system   = 'StrangeSystem';
+NumeralSystem::setSystem($system, $alphabet);
 
 $number = '9999';
-$res = NumeralSystem::convertTo($number, $name);
+$res = NumeralSystem::convertTo($number, $system);
 echo $res . PHP_EOL; // $)!$
 
-$res = NumeralSystem::convertFrom($res, $name);
+$res = NumeralSystem::convertFrom($res, $system);
 echo $res . PHP_EOL; // 9999
+
+
+// Full binary alphabet
+for ($i = 0, $alphabet = ''; $i < 256; $i++) $alphabet .= chr($i);
+$system = 'binary';
+NumeralSystem::setSystem($system, $alphabet);
+// Examples with it
+$var = 'example';
+$expected_hex = sha1($var);       // sha1 hash in hex
+$expected_bin = sha1($var, true); // raw sha1 hash (binary representation)
+$result_hex   = NumeralSystem::convert($expected_bin, $system, 16);
+$result_bin   = NumeralSystem::convert($expected_hex, 16, $system);
+echo $expected_hex . PHP_EOL; // c3499c2729730a7f807efb8676a92dcb6f8a3f8f
+echo $result_hex . PHP_EOL;   // c3499c2729730a7f807efb8676a92dcb6f8a3f8f
+echo ($expected_bin === $result_bin) . PHP_EOL; // 1
 ```
 
 Example #3 - Arbitrary precision arithmetic
