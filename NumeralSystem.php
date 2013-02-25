@@ -1,7 +1,6 @@
 <?php
 
 namespace Aza\Components\Math;
-use Aza\Components\Common\CArray;
 use Aza\Components\Math\Exceptions\Exception;
 
 /**
