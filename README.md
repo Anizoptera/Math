@@ -48,7 +48,9 @@ You can see [package information on Packagist.](https://packagist.org/packages/a
 Examples
 --------
 
-Example #1 - Numeral systems conversions
+You can use [examples/example.php](examples/example.php) to run all examples.
+
+#### Example #1 - Numeral systems conversions
 
 ```php
 $res = NumeralSystem::convert('WIKIPEDIA', 36, 10);
@@ -64,7 +66,7 @@ $res = NumeralSystem::convertFrom('BvepB3yk4UBFhGew', 62);
 echo $res . PHP_EOL; // 9173073869129891730738691298
 ```
 
-Example #2 - Custom numeral system
+#### Example #2 - Custom numeral system
 
 ```php
 // Add new system with custom alphabet
@@ -97,7 +99,7 @@ echo $result_hex . PHP_EOL;   // c3499c2729730a7f807efb8676a92dcb6f8a3f8f
 echo ($expected_bin === $result_bin) . PHP_EOL; // 1
 ```
 
-Example #3 - Arbitrary precision arithmetic
+#### Example #3 - Arbitrary precision arithmetic
 
 ```php
 // Create new big number with the specified precision for operations - 20 (default is 100)
@@ -128,7 +130,7 @@ echo ($number->compareTo(20) === 0) . PHP_EOL; // 1
 echo $number->isLessThanOrEqualTo(20) . PHP_EOL; // 1
 ```
 
-Example #4 - Input filtration
+#### Example #4 - Input filtration
 
 ```php
 // The arguments of all functions are also filtered.
@@ -136,7 +138,7 @@ $number = new BigNumber("9,223 372`036'854,775.808000");
 echo $number . PHP_EOL; // 9223372036854775.808
 ```
 
-Example #5 - Do some operations and then convert to base62
+#### Example #5 - Do some operations and then convert to base62
 
 ```php
 $number = new BigNumber('9223372036854775807');
@@ -148,11 +150,15 @@ echo $number . PHP_EOL; // 1wlVYJaWMuw53lV7Cg98qn
 Tests
 -----
 
-The tests are in the `Tests` folder and reach 100% code-coverage.
+Tests are in the `Tests` folder and reach 100% code-coverage.
 To run them, you need PHPUnit.
 Example:
 
     $ phpunit --configuration phpunit.xml.dist
+
+Or with coverage report:
+
+    $ phpunit --configuration phpunit.xml.dist --coverage-html code_coverage/
 
 
 License
