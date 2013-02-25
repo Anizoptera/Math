@@ -16,7 +16,7 @@ Features:
 * Universal number (and huge number!) convertor between positional numeral systems (supported bases from 2 to 62 inclusive, and systems with custom alphabet; pure PHP realisation, but can use [GMP](http://php.net/gmp) and [core PHP](http://php.net/math) functions for speed optimization). Negative and huge integers are supported.
 * Convenient, fully documented and test covered API
 
-AzaMath is a part of Anizoptera CMF, written by [Amal Samally](https://github.com/amal) (amal.samally at gmail.com).
+AzaMath is a part of Anizoptera CMF, written by [Amal Samally](http://azagroup.ru#amal) (amal.samally at gmail.com).
 Arbitrary precision arithmetic part is partially based on [Moontoast Math Library](https://github.com/moontoast/math).
 
 Licensed under the MIT License.
@@ -48,7 +48,9 @@ You can see [package information on Packagist.](https://packagist.org/packages/a
 Examples
 --------
 
-Example #1 - Numeral systems conversions
+You can use [examples/example.php](examples/example.php) to run all examples.
+
+#### Example #1 - Numeral systems conversions
 
 ```php
 $res = NumeralSystem::convert('WIKIPEDIA', 36, 10);
@@ -64,25 +66,40 @@ $res = NumeralSystem::convertFrom('BvepB3yk4UBFhGew', 62);
 echo $res . PHP_EOL; // 9173073869129891730738691298
 ```
 
-Example #2 - Custom numeral system
+#### Example #2 - Custom numeral system
 
 ```php
 // Add new system with custom alphabet
 // Each char must appear only once.
-// It should use only ASCII characters.
+// It should use only one byte characters.
 $alphabet = '!@#$%^&*()_+=-'; // base 14 equivalent
-$name     = 'StrangeSystem';
-NumeralSystem::setSystem($name, $alphabet);
+$system   = 'StrangeSystem';
+NumeralSystem::setSystem($system, $alphabet);
 
 $number = '9999';
-$res = NumeralSystem::convertTo($number, $name);
+$res = NumeralSystem::convertTo($number, $system);
 echo $res . PHP_EOL; // $)!$
 
-$res = NumeralSystem::convertFrom($res, $name);
+$res = NumeralSystem::convertFrom($res, $system);
 echo $res . PHP_EOL; // 9999
+
+
+// Full binary alphabet
+for ($i = 0, $alphabet = ''; $i < 256; $i++) $alphabet .= chr($i);
+$system = 'binary';
+NumeralSystem::setSystem($system, $alphabet);
+// Examples with it
+$var = 'example';
+$expected_hex = sha1($var);       // sha1 hash in hex
+$expected_bin = sha1($var, true); // raw sha1 hash (binary representation)
+$result_hex   = NumeralSystem::convert($expected_bin, $system, 16);
+$result_bin   = NumeralSystem::convert($expected_hex, 16, $system);
+echo $expected_hex . PHP_EOL; // c3499c2729730a7f807efb8676a92dcb6f8a3f8f
+echo $result_hex . PHP_EOL;   // c3499c2729730a7f807efb8676a92dcb6f8a3f8f
+echo ($expected_bin === $result_bin) . PHP_EOL; // 1
 ```
 
-Example #3 - Arbitrary precision arithmetic
+#### Example #3 - Arbitrary precision arithmetic
 
 ```php
 // Create new big number with the specified precision for operations - 20 (default is 100)
@@ -101,19 +118,19 @@ echo $number . PHP_EOL; // 968232710.955
 
 // Comparisions
 $number = new BigNumber(10);
-$this->assertTrue($number->compareTo(20) < 0);
-$this->assertTrue($number->isLessThan(20));
+echo ($number->compareTo(20) < 0) . PHP_EOL; // 1
+echo $number->isLessThan(20) . PHP_EOL; // 1
 
 $number = new BigNumber(20);
-$this->assertTrue($number->compareTo(10) > 0);
-$this->assertTrue($number->isGreaterThan(10));
+echo ($number->compareTo(10) > 0) . PHP_EOL; // 1
+echo $number->isGreaterThan(10) . PHP_EOL; // 1
 
 $number = new BigNumber(20);
-$this->assertTrue($number->compareTo(20) === 0);
-$this->assertTrue($number->isLessThanOrEqualTo(20));
+echo ($number->compareTo(20) === 0) . PHP_EOL; // 1
+echo $number->isLessThanOrEqualTo(20) . PHP_EOL; // 1
 ```
 
-Example #4 - Input filtration
+#### Example #4 - Input filtration
 
 ```php
 // The arguments of all functions are also filtered.
@@ -121,7 +138,7 @@ $number = new BigNumber("9,223 372`036'854,775.808000");
 echo $number . PHP_EOL; // 9223372036854775.808
 ```
 
-Example #5 - Do some operations and then convert to base62
+#### Example #5 - Do some operations and then convert to base62
 
 ```php
 $number = new BigNumber('9223372036854775807');
@@ -133,11 +150,15 @@ echo $number . PHP_EOL; // 1wlVYJaWMuw53lV7Cg98qn
 Tests
 -----
 
-The tests are in the `Tests` folder and reach 100% code-coverage.
+Tests are in the `Tests` folder and reach 100% code-coverage.
 To run them, you need PHPUnit.
 Example:
 
     $ phpunit --configuration phpunit.xml.dist
+
+Or with coverage report:
+
+    $ phpunit --configuration phpunit.xml.dist --coverage-html code_coverage/
 
 
 License
@@ -149,4 +170,4 @@ MIT, see LICENSE.md
 Links
 -----
 
-[(RU) AzaMath — Конвертация систем счисления (включая кастомные) + арифметика произвольной точности](http://habrahabr.ru/post/168935/)
+[(RU) AzaMath — Cистемы счисления (включая кастомные) + арифметика произвольной точности на PHP](http://habrahabr.ru/post/168935/)

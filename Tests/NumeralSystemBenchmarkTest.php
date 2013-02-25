@@ -240,7 +240,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 			array_fill_keys(range(2, 62), 1),
 		);
 
-		$data = PhpGen::getCode($data, 3, 1);
+		$data = PhpGen::instance()->getCode($data, 3, 1);
 		print_r($data);
 		/*
 			[
