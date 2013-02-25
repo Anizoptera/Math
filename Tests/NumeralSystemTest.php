@@ -567,7 +567,7 @@ class NumeralSystemTest extends TestCase
 
 		// ----
 		$var = time();
-		$expected_hex = sha1($var);
+		$expected_hex = ltrim(sha1($var), '0'); // sha1 can return hex value padded with zeros
 		$expected_bin = sha1($var, true);
 		$result_hex   = NumeralSystem::convert($expected_bin, $name, 16);
 		$result_bin   = NumeralSystem::convert($expected_hex, 16, $name);
