@@ -16,7 +16,7 @@ Features:
 * Universal number (and huge number!) convertor between positional numeral systems (supported bases from 2 to 62 inclusive, and systems with custom alphabet; pure PHP realisation, but can use [GMP](http://php.net/gmp) and [core PHP](http://php.net/math) functions for speed optimization). Negative and huge integers are supported.
 * Convenient, fully documented and test covered API
 
-AzaMath is a part of Anizoptera CMF, written by [Amal Samally](http://azagroup.ru#amal) (amal.samally at gmail.com).
+AzaMath is a part of [Anizoptera CMF](https://github.com/Anizoptera), written by [Amal Samally](http://azagroup.ru/#amal) (amal.samally at gmail.com) and [AzaGroup](http://azagroup.ru/) team.
 Arbitrary precision arithmetic part is partially based on [Moontoast Math Library](https://github.com/moontoast/math).
 
 Licensed under the MIT License.
@@ -164,7 +164,7 @@ Or with coverage report:
 License
 -------
 
-MIT, see LICENSE.md
+MIT, see [LICENSE.md](LICENSE.md)
 
 
 Links
