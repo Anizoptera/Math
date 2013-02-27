@@ -11,6 +11,8 @@ require __DIR__ . '/../vendor/autoload.php';
  *
  * @project Anizoptera CMF
  * @package system.math
+ * @author  Amal Samally <amal.samally at gmail.com>
+ * @license MIT
  */
 
 

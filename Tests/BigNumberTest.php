@@ -11,6 +11,8 @@ use ReflectionMethod;
  *
  * @project Anizoptera CMF
  * @package system.math
+ * @author  Amal Samally <amal.samally at gmail.com>
+ * @license MIT
  *
  * @requires extension bcmath
  */

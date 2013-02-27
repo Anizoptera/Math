@@ -21,6 +21,8 @@ use Aza\Components\Math\Exceptions\Exception;
  *
  * @project Anizoptera CMF
  * @package system.math
+ * @author  Amal Samally <amal.samally at gmail.com>
+ * @license MIT
  */
 abstract class NumeralSystem
 {
