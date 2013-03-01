@@ -52,6 +52,7 @@ echo $res . PHP_EOL; // 9999
 
 
 // Full binary alphabet
+// You can use NumeralSystem::initBinary() to initialize binary alphabet!
 for ($i = 0, $alphabet = ''; $i < 256; $i++) $alphabet .= chr($i);
 $system = 'binary';
 NumeralSystem::setSystem($system, $alphabet);

@@ -538,9 +538,7 @@ class NumeralSystemTest extends TestCase
 	public function testBinaryAlphabet()
 	{
 		// Full binary alphabet
-		for ($i = 0, $alphabet = ''; $i < 256; $i++) $alphabet .= chr($i);
-		$name = 'binary';
-		NumeralSystem::setSystem($name, $alphabet);
+		$name = NumeralSystem::initBinary();
 
 		// ----
 		$var = 'example';

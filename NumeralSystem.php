@@ -49,6 +49,11 @@ abstract class NumeralSystem
 	 */
 	const BASE64_URL = '64url';
 
+	/**
+	 * Binary alphabet. Call
+	 */
+	const BINARY = 'binary';
+
 	//endregion
 
 
@@ -521,6 +526,20 @@ abstract class NumeralSystem
 			'noNegative' => false !== strpos($alphabet, '-'),
 			'noFraction' => false !== strpos($alphabet, '.'),
 		);
+	}
+
+	/**
+	 * Initializes binary alphabet
+	 *
+	 * @return string initialized system name
+	 */
+	public static function initBinary()
+	{
+		for ($i = 0, $alphabet = ''; $i < 256; $i++) {
+			$alphabet .= chr($i);
+		}
+		self::setSystem($system = self::BINARY, $alphabet);
+		return $system;
 	}
 }
 
