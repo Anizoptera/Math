@@ -535,10 +535,14 @@ abstract class NumeralSystem
 	 */
 	public static function initBinary()
 	{
-		for ($i = 0, $alphabet = ''; $i < 256; $i++) {
-			$alphabet .= chr($i);
+		//@codeCoverageIgnoreStart
+		if (!isset(self::$systems[$system = self::BINARY])) {
+			for ($i = 0, $alphabet = ''; $i < 256; $i++) {
+				$alphabet .= chr($i);
+			}
+			self::setSystem($system, $alphabet);
 		}
-		self::setSystem($system = self::BINARY, $alphabet);
+		//@codeCoverageIgnoreEnd
 		return $system;
 	}
 }
