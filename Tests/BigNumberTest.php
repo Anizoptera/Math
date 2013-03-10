@@ -23,11 +23,17 @@ class BigNumberTest extends TestCase
 	 */
 	protected $oldScale;
 
+	/**
+	 * {@inheritdoc}
+	 */
 	protected function setUp()
 	{
 		$this->oldScale = BigNumber::getDefaultScale();
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
 	protected function tearDown()
 	{
 		BigNumber::setDefaultScale($this->oldScale);
