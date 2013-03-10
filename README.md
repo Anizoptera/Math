@@ -13,8 +13,9 @@ and universal convertor between positional numeral systems (supported bases from
 Features:
 
 * Functionality to work with large numbers (integers, floats) with arbitrary precision (requires [BCMath](http://php.net/bcmath)). Can work with floats (E notation too!) and without loosing precision (as far as possible). It supports all basic arithmetic, exponentiation, square root, modulus, bit shift, rounding, comparison, and some other operations.
+* Very simple math for big integers (only integers!, has a native PHP realization and can use BCMath or GMP for speedup).
 * Universal number (and huge number!) convertor between positional numeral systems (supported bases from 2 to 62 inclusive, and systems with custom alphabet; pure PHP realisation, but can use [GMP](http://php.net/gmp) and [core PHP](http://php.net/math) functions for speed optimization). Negative and huge integers are supported.
-* Convenient, fully documented and test covered API
+* Convenient, fully documented and test covered API.
 
 AzaMath is a part of [Anizoptera CMF](https://github.com/Anizoptera), written by [Amal Samally](http://azagroup.ru/#amal) (amal.samally at gmail.com) and [AzaGroup](http://azagroup.ru/) team.
 Arbitrary precision arithmetic part is partially based on [Moontoast Math Library](https://github.com/moontoast/math).
@@ -27,7 +28,7 @@ Requirements
 
 * PHP 5.3.3 (or later);
 * [BCMath (Binary Calculator Arbitrary Precision Mathematics)](http://php.net/bcmath) - Required only to work with arbitrary precision arithmetic operations;
-* [GMP (GNU Multiple Precision)](http://php.net/gmp) - Recommended. Used to speed up number systems conversions and (in future) arbitrary precision arithmetic operations;
+* [GMP (GNU Multiple Precision)](http://php.net/gmp) - Recommended. Used to speed up number systems conversions and arbitrary precision arithmetic operations;
 
 
 Installation
