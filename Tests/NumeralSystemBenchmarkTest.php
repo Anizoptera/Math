@@ -260,7 +260,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 
 	/**
 	 * Test native php functions for converting between
-	 * numbersystems for speed and limitations
+	 * number systems for speed and limitations
 	 *
 	 * @author amal
 	 *
@@ -385,8 +385,9 @@ class NumeralSystemBenchmarkTest extends TestCase
 		 * From decimal to binary
 		 *
 		 * 1. special      - decbin($number)
-		 * 2. base_convert - base_convert($number, 10, 2)
-		 * 3. gmp          - gmp_strval(gmp_init($number, 10), 2)
+		 * 2. sprintf      - sprintf('%b', $number)
+		 * 3. base_convert - base_convert($number, 10, 2)
+		 * 4. gmp          - gmp_strval(gmp_init($number, 10), 2)
 		 */
 		if (true) {
 			$data = $_data;
@@ -394,8 +395,10 @@ class NumeralSystemBenchmarkTest extends TestCase
 				$a = decbin($number);
 				$b = base_convert($number, 10, 2);
 				$c = gmp_strval(gmp_init($number, 10), 2);
+				$d = sprintf('%b', $number);
 				$this->assertTrue((string)$a === (string)$b, "base_convert: $number");
 				$this->assertTrue((string)$b === (string)$c, "gmp: $number");
+				$this->assertTrue((string)$c === (string)$d, "sprintf: $number");
 			}
 
 			$res = array();
@@ -407,6 +410,15 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['spec'][] = Date::timeEnd($start);
+
+				$start = microtime(true);
+				for ($i = 0; $i < $iteratons; $i++) {
+					foreach ($data as $number) {
+						sprintf('%b', $number);
+					}
+				}
+				$res['sprintf'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -414,6 +426,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['base_convert'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -451,6 +464,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['spec'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -458,6 +472,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['base_convert'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -474,8 +489,9 @@ class NumeralSystemBenchmarkTest extends TestCase
 		 * From decimal to octal
 		 *
 		 * 1. special      - decoct($number)
-		 * 2. base_convert - base_convert($number, 10, 8)
-		 * 3. gmp          - gmp_strval(gmp_init($number, 10), 8)
+		 * 2. sprintf      - sprintf('%o', $number)
+		 * 3. base_convert - base_convert($number, 10, 8)
+		 * 4. gmp          - gmp_strval(gmp_init($number, 10), 8)
 		 */
 		if (true) {
 			$data = $_data;
@@ -483,8 +499,10 @@ class NumeralSystemBenchmarkTest extends TestCase
 				$a = decoct($number);
 				$b = base_convert($number, 10, 8);
 				$c = gmp_strval(gmp_init($number, 10), 8);
+				$d = sprintf('%o', $number);
 				$this->assertTrue((string)$a === (string)$b, "base_convert: $number");
 				$this->assertTrue((string)$b === (string)$c, "gmp: $number");
+				$this->assertTrue((string)$c === (string)$d, "sprintf: $number");
 			}
 
 			$res = array();
@@ -496,6 +514,15 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['spec'][] = Date::timeEnd($start);
+
+				$start = microtime(true);
+				for ($i = 0; $i < $iteratons; $i++) {
+					foreach ($data as $number) {
+						sprintf('%o', $number);
+					}
+				}
+				$res['sprintf'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -503,6 +530,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['base_convert'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -540,6 +568,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['spec'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -547,6 +576,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['base_convert'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -563,8 +593,9 @@ class NumeralSystemBenchmarkTest extends TestCase
 		 * From decimal to hexadecimal
 		 *
 		 * 1. special      - dechex($number)
-		 * 2. base_convert - base_convert($number, 10, 16)
-		 * 3. gmp          - gmp_strval(gmp_init($number, 10), 16)
+		 * 2. sprintf      - sprintf('%x', $number)
+		 * 3. base_convert - base_convert($number, 10, 16)
+		 * 4. gmp          - gmp_strval(gmp_init($number, 10), 16)
 		 */
 		if (true) {
 			$data = $_data;
@@ -572,8 +603,10 @@ class NumeralSystemBenchmarkTest extends TestCase
 				$a = dechex($number);
 				$b = base_convert($number, 10, 16);
 				$c = gmp_strval(gmp_init($number, 10), 16);
+				$d = sprintf('%x', $number);
 				$this->assertTrue((string)$a === (string)$b, "base_convert: $number");
 				$this->assertTrue((string)$b === (string)$c, "gmp: $number");
+				$this->assertTrue((string)$c === (string)$d, "sprintf: $number");
 			}
 
 			$res = array();
@@ -585,6 +618,15 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['spec'][] = Date::timeEnd($start);
+
+				$start = microtime(true);
+				for ($i = 0; $i < $iteratons; $i++) {
+					foreach ($data as $number) {
+						sprintf('%x', $number);
+					}
+				}
+				$res['sprintf'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -592,6 +634,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['base_convert'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -629,6 +672,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['spec'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
@@ -636,6 +680,7 @@ class NumeralSystemBenchmarkTest extends TestCase
 					}
 				}
 				$res['base_convert'][] = Date::timeEnd($start);
+
 				$start = microtime(true);
 				for ($i = 0; $i < $iteratons; $i++) {
 					foreach ($data as $number) {
