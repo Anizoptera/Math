@@ -170,6 +170,3 @@ class PHPMath extends BigMath
 		);
 	}
 }
-
-// Initialize binary alphabet in converter
-NumeralSystem::initBinary();
