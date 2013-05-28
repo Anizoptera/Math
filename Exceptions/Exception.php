@@ -8,5 +8,7 @@ use RuntimeException as BaseExeption;
  *
  * @project Anizoptera CMF
  * @package system.math
+ * @author  Amal Samally <amal.samally at gmail.com>
+ * @license MIT
  */
 class Exception extends BaseExeption {}

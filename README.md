@@ -5,36 +5,54 @@ Anizoptera CMF mathematic component.
 
 https://github.com/Anizoptera/Math
 
-[![Build Status](https://secure.travis-ci.org/Anizoptera/Math.png?branch=master)](http://travis-ci.org/Anizoptera/Math)
+[![Build Status][TravisImage]][Travis]
+
+
+Table of Contents
+-----------------
+
+1. [Introduction](#introduction)
+2. [Requirements](#requirements)
+3. [Installation](#installation)
+4. [Examples](#examples)
+   * [Numeral systems conversions](#example-1---numeral-systems-conversions)
+   * [Custom numeral system](#example-2---custom-numeral-system)
+   * [Arbitrary precision arithmetic](#example-3---arbitrary-precision-arithmetic)
+   * [Input filtration](#example-4---input-filtration)
+   * [Do some operations and then convert to base62](#example-5---do-some-operations-and-then-convert-to-base62)
+5. [Tests](#tests)
+6. [Credits](#credits)
+7. [License](#license)
+8. [Links](#links)
+
+
+Introduction
+------------
 
 Provides functionality to work with large numbers with arbitrary precision (using BCMath).
 and universal convertor between positional numeral systems (supported bases from 2 to 62 inclusive, and custom systems; pure PHP realisation, but can use GMP and core PHP functions for speed optimization).
 
 Features:
 
-* Functionality to work with large numbers (integers, floats) with arbitrary precision (requires [BCMath](http://php.net/bcmath)). Can work with floats (E notation too!) and without loosing precision (as far as possible). It supports all basic arithmetic, exponentiation, square root, modulus, bit shift, rounding, comparison, and some other operations.
-* Universal number (and huge number!) convertor between positional numeral systems (supported bases from 2 to 62 inclusive, and systems with custom alphabet; pure PHP realisation, but can use [GMP](http://php.net/gmp) and [core PHP](http://php.net/math) functions for speed optimization). Negative and huge integers are supported.
-* Convenient, fully documented and test covered API
-
-AzaMath is a part of Anizoptera CMF, written by [Amal Samally](http://azagroup.ru#amal) (amal.samally at gmail.com).
-Arbitrary precision arithmetic part is partially based on [Moontoast Math Library](https://github.com/moontoast/math).
-
-Licensed under the MIT License.
+* Functionality to work with large numbers (integers, floats) with arbitrary precision (requires [BCMath][]). Can work with floats (E notation too!) and without loosing precision (as far as possible). It supports all basic arithmetic, exponentiation, square root, modulus, bit shift, rounding, comparison, and some other operations.
+* Very simple math for big integers (only integers!, has a native PHP realization and can use BCMath or GMP for speedup).
+* Universal number (and huge number!) convertor between positional numeral systems (supported bases from 2 to 62 inclusive, and systems with custom alphabet; pure PHP realisation, but can use [GMP][] and [core PHP](http://php.net/math) functions for speed optimization). Negative and huge integers are supported.
+* Convenient, fully documented and test covered API.
 
 
 Requirements
 ------------
 
 * PHP 5.3.3 (or later);
-* [BCMath (Binary Calculator Arbitrary Precision Mathematics)](http://php.net/bcmath) - Required only to work with arbitrary precision arithmetic operations;
-* [GMP (GNU Multiple Precision)](http://php.net/gmp) - Recommended. Used to speed up number systems conversions and (in future) arbitrary precision arithmetic operations;
+* [BCMath (Binary Calculator Arbitrary Precision Mathematics)][BCMath] - Required only to work with arbitrary precision arithmetic operations;
+* [GMP (GNU Multiple Precision)][GMP] - Recommended. Used to speed up number systems conversions and arbitrary precision arithmetic operations;
 
 
 Installation
 ------------
 
 The recommended way to install AzaMath is [through composer](http://getcomposer.org).
-You can see [package information on Packagist.](https://packagist.org/packages/aza/math)
+You can see [package information on Packagist][ComposerPackage].
 
 ```JSON
 {
@@ -85,7 +103,6 @@ echo $res . PHP_EOL; // 9999
 
 
 // Full binary alphabet
-for ($i = 0, $alphabet = ''; $i < 256; $i++) $alphabet .= chr($i);
 $system = 'binary';
 NumeralSystem::setSystem($system, $alphabet);
 // Examples with it
@@ -161,13 +178,37 @@ Or with coverage report:
     $ phpunit --configuration phpunit.xml.dist --coverage-html code_coverage/
 
 
+Credits
+-------
+
+AzaMath is a part of [Anizoptera CMF][], written by [Amal Samally][] (amal.samally at gmail.com) and [AzaGroup][] team.<br/>
+Arbitrary precision arithmetic part is partially based on [Moontoast Math Library](https://github.com/moontoast/math).
+
+
 License
 -------
 
-MIT, see LICENSE.md
+Released under the [MIT](LICENSE.md) license.
 
 
 Links
 -----
 
-[(RU) AzaMath — Cистемы счисления (включая кастомные) + арифметика произвольной точности на PHP](http://habrahabr.ru/post/168935/)
+* [Composer package][ComposerPackage]
+* [Last build on the Travis CI][Travis]
+* [Project profile on the Ohloh](https://www.ohloh.net/p/AzaMath)
+* (RU) [AzaMath — Cистемы счисления (включая кастомные) + арифметика произвольной точности на PHP](http://habrahabr.ru/post/168935/)
+* Other Anizoptera CMF components on the [GitHub][Anizoptera CMF] / [Packagist](https://packagist.org/packages/aza)
+* (RU) [AzaGroup team blog][AzaGroup]
+
+
+
+[BCMath]: http://php.net/bcmath
+[GMP]:    http://php.net/gmp
+
+[Anizoptera CMF]:  https://github.com/Anizoptera
+[Amal Samally]:    http://azagroup.ru/about/#amal
+[AzaGroup]:        http://azagroup.ru/
+[ComposerPackage]: https://packagist.org/packages/aza/math
+[TravisImage]:     https://secure.travis-ci.org/Anizoptera/Math.png?branch=master
+[Travis]:          https://travis-ci.org/Anizoptera/Math

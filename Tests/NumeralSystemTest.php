@@ -11,9 +11,35 @@ use ReflectionMethod;
  *
  * @project Anizoptera CMF
  * @package system.math
+ * @author  Amal Samally <amal.samally at gmail.com>
+ * @license MIT
  */
 class NumeralSystemTest extends TestCase
 {
+	/**
+	 * @var bool
+	 */
+	protected $hasGmp;
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function setUp()
+	{
+		$this->hasGmp = NumeralSystem::$hasGmp;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function tearDown()
+	{
+		NumeralSystem::$hasGmp = $this->hasGmp;
+	}
+
+
+
 	/**
 	 * Tests case insensitivity
 	 *
@@ -289,7 +315,6 @@ class NumeralSystemTest extends TestCase
 	 */
 	public function testNoGmp()
 	{
-		$hasGmp = NumeralSystem::$hasGmp;
 		NumeralSystem::$hasGmp = false;
 
 		$converted = NumeralSystem::convert(
@@ -346,9 +371,6 @@ class NumeralSystemTest extends TestCase
 		$this->assertSame('499602d2', $number1);
 		$number2 = NumeralSystem::convert("1q2w3e4r5t6y7z8~9`0", 10, 16);
 		$this->assertSame($number1, $number2);
-
-
-		NumeralSystem::$hasGmp = $hasGmp;
 	}
 
 
@@ -361,7 +383,6 @@ class NumeralSystemTest extends TestCase
 	 */
 	public function testSameSystemOptimization()
 	{
-
 		$test      = 'zxlknvweuvh!@#$%^&*()438fhsvb94f';
 		$converted = NumeralSystem::convert($test, 2, 2);
 		$this->assertSame($test, $converted);
@@ -527,6 +548,36 @@ class NumeralSystemTest extends TestCase
 
 
 	/**
+	 * Zero padded numbers convertation
+	 *
+	 * @author amal
+	 * @group unit
+	 */
+	public function testConvertZeroPadded()
+	{
+		$data = array(
+			array('0xmt',     '229827'),
+			array('0005fb86', '392070'),
+		);
+
+		$converted = NumeralSystem::convert($data[0][0], 62, 10);
+		$this->assertSame($data[0][1], $converted);
+
+		$converted = NumeralSystem::convert($data[1][0], 16, 10);
+		$this->assertSame($data[1][1], $converted);
+
+
+		NumeralSystem::$hasGmp = false;
+
+		$converted = NumeralSystem::convert($data[0][0], 62, 10);
+		$this->assertSame($data[0][1], $converted);
+
+		$converted = NumeralSystem::convert($data[1][0], 16, 10);
+		$this->assertSame($data[1][1], $converted);
+	}
+
+
+	/**
 	 * Binary data conversion
 	 *
 	 * @author amal
@@ -536,9 +587,7 @@ class NumeralSystemTest extends TestCase
 	public function testBinaryAlphabet()
 	{
 		// Full binary alphabet
-		for ($i = 0, $alphabet = ''; $i < 256; $i++) $alphabet .= chr($i);
-		$name = 'binary';
-		NumeralSystem::setSystem($name, $alphabet);
+		$name = NumeralSystem::BINARY;
 
 		// ----
 		$var = 'example';
