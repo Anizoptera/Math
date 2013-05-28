@@ -4,7 +4,7 @@ CHANGELOG
 ## Version 1.1 (work in progress)
 
 
-## Version 1.0.3 (05.04.2013)
+- **MINOR:** PHP 5.3.3 test removed, 5.5 failure is not allowed any more (amal)
 - **MINOR:** Massive README improvements (amal)
 - **FIXED:** Conversion of zero-padded numbers with GMP (amal)
 - **IMPROVED:** Binary alphabet is bundled now. `NumeralSystem::initBinary()` is deleted (amal)
