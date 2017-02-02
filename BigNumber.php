@@ -10,7 +10,6 @@ use Aza\Components\Math\Exceptions\Exception;
  *
  * Based on {@link https://github.com/moontoast/math Moontoast Math Library}
  *
- * @project Anizoptera CMF
  * @package system.math
  * @author  Amal Samally <amal.samally at gmail.com>
  * @license MIT
